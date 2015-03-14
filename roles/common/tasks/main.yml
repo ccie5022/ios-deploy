@@ -1,0 +1,15 @@
+---
+
+- name: Router ID Configuration
+  template:
+    src=router_id.j2
+    dest={{ build_dir }}/router_id.cnf
+    mode=0400
+  tags: [ common, ospf, bgp ]
+
+- name: OSPF Configuration
+  template:
+    src=ospf.j2
+    dest={{ build_dir }}/ospf.cnf
+    mode=0400
+  tags: [ common, ospf ]

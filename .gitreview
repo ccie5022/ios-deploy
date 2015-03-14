@@ -1,0 +1,5 @@
+[gerrit]
+host=gerrit
+port=29418
+project=enchilada.git
+defaultbranch=master

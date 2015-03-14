@@ -1,0 +1,77 @@
+---
+
+- name: One-Time Setup
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Get Timestamp
+      command: date +%Y-%m-%d_%H%M%S
+      register: timestamp
+      always_run: yes
+
+- name: Base Directory Setup
+  hosts: all
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Create Log Directory
+      file:
+        path={{ log_dir }}
+        state=directory
+
+    - name: Create Diff Directory
+      file:
+        path={{ diff_dir }}
+        state=directory
+
+    - name: Clean Build Directory
+      file:
+        path={{ build_dir }}
+        state=absent
+
+    - name: Clean Config Directory
+      file:
+        path={{ config_dir }}
+        state=absent
+
+    - name: Create Build Directory
+      file:
+        path={{ build_dir }}
+        state=directory
+
+    - name: Create Config Directory
+      file:
+        path={{ config_dir }}
+        state=directory
+
+- name: Build Config
+  hosts: all
+  connection: local
+  gather_facts: no
+  roles: [ common ]
+
+- name: Compile Config
+  hosts: all
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Assemble Fragments
+      assemble:
+        src={{ build_dir }}
+        dest={{ config_file }}
+
+- name: Deploy Config
+  hosts: all
+  gather_facts: no
+  connection: local
+  tasks:
+    - name: Deploy Cisco Systems
+      netmiko_install_config:
+        host={{ inventory_hostname }}
+        user={{ user }}
+        passwd={{ pass }}
+        file={{ config_file }}
+        log_file={{ log_dir }}/{{ hostvars.localhost.timestamp.stdout }}.log
+        diff_file={{ diff_dir }}/{{ hostvars.localhost.timestamp.stdout }}.log
+      when: vendor == 'ios'

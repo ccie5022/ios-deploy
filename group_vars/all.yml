@@ -1,0 +1,9 @@
+---
+
+log_dir: /tmp/{{ inventory_hostname }}/log
+diff_dir: /tmp/{{ inventory_hostname }}/diff
+build_dir: /tmp/{{ inventory_hostname }}/build
+config_dir: /tmp/{{ inventory_hostname }}/config
+config_file: /tmp/{{ inventory_hostname }}/config/compiled.cnf
+user: ansible
+pass: Ansible123
